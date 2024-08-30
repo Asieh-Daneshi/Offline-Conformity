@@ -1,5 +1,6 @@
 # read the data file ==========================================================
-import pandas as pd  
+import pandas as pd
+import numpy as np  
 df = pd.read_csv("OutputData.csv") 
 #==============================================================================
 # Column1 :> SessionInd; 	// if index==1, it is practice session, else, it is test session
@@ -18,3 +19,48 @@ Threshold=df.iloc[:,3]
 mainTrials=df[Threshold==6]     # in main trials, the ration of blue to yellow pixels is 50-50
 
 df.iloc[:,]
+
+
+#==============================================================================
+EyeData = pd.read_table('Hit_Data1.txt', sep=' ')
+GazeTime=np.zeros((len(EyeData),1))
+GazeObject=np.zeros((len(EyeData),1))
+
+for r1 in range(0, len(EyeData)): 
+    temp0=EyeData.iloc[r1,0]
+    temp1=temp0.split()
+    GazeTime[r1,0]=temp1[0]
+    tempObject=temp1[1]
+    print(tempObject)
+    match tempObject:
+        case "Female01":
+            GazeObject[r1,0]=1
+        case "Female02":
+            GazeObject[r1,0]=2
+        case "Female03":
+            GazeObject[r1,0]=3
+        case "MixamoFemale01":
+            GazeObject[r1,0]=4
+        case "Male01":
+            GazeObject[r1,0]=5
+        case "Male02":
+            GazeObject[r1,0]=6
+        case "Male03":
+            GazeObject[r1,0]=7
+        case "MixamoMale01":
+            GazeObject[r1,0]=8
+        case "SmallSquare(Clone)":
+            GazeObject[r1,0]=9
+        case "Wall_Front":
+            GazeObject[r1,0]=10
+        case "Wall_Left":
+            GazeObject[r1,0]=11
+        case "Wall_Right":
+            GazeObject[r1,0]=12
+        case "Floor":
+            GazeObject[r1,0]=13
+        case _:
+            GazeObject[r1,0]=0
+
+
+
