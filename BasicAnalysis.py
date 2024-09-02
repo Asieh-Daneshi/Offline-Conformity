@@ -15,12 +15,15 @@ df = pd.read_csv("OutputData.csv")
 # Column10 :> responding agents (attention: if all 8 agents respond, the value is crazy! Don't look at it)
 # Column11 :> the time passes from the unset of the experiment until the fixation disappears and next trial starts
 # =============================================================================
-Threshold=df.iloc[:,3]
-mainTrials=df[Threshold==6]     # in main trials, the ration of blue to yellow pixels is 50-50
-
-df.iloc[:,]
-
-
+SessionInd=df.iloc[:,0]         # if 2, then test session
+Threshold=df.iloc[:,2]          # if 0.5, then main trials, else practice or catch trials
+MainTrials=df[(SessionInd==2) & (Threshold ==0.5)]  # only main trials, 80% of trials are main trials
+AllInd=df.index.values.tolist()                         # indices of all trials
+MainInd=MainTrials.index.values.tolist()               # indices of main trials
+for a1 in range(0, len(MainTrials)):
+    MainTrials.loc[MainInd[a1],'Onset']=df.iloc[MainInd[a1]-1,10]   
+    # "Onset" is the onset time of each trial (column 11)
+    # "time from the onset of experiment" is the time passed since the experiment started until the participant responds or we report "missed trial" (column 8)
 # =============================================================================
 EyeData = pd.read_table('Hit_Data1.txt', sep=' ')
 GazeTime=np.zeros((len(EyeData),1))
@@ -64,4 +67,7 @@ for r1 in range(0, len(EyeData)):
             GazeObject[r1,0]=0
 
 # =============================================================================
-
+for a1 in range(0, len(MainTrials)):
+    GazeTimeTrial=GazeTime[(GazeTime >= MainTrials.iloc[a1,11]) & (GazeTime <= (MainTrials.iloc[a1,11]+MainTrials.iloc[a1,6]))]
+    GazeObjectTrial=GazeObject[(GazeTime >= MainTrials.iloc[a1,11]) & (GazeTime <= (MainTrials.iloc[a1,11]+MainTrials.iloc[a1,6]))]
+    
