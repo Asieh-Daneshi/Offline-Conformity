@@ -67,7 +67,59 @@ for r1 in range(0, len(EyeData)):
             GazeObject[r1,0]=0
 
 # =============================================================================
+# *****************************************************************************
+# *******     Finding the time of gaze on each object at each trial     *******
+# *****************************************************************************
+GazeObjectTime=np.zeros((len(MainTrials),14))       # includes all the objects in the scene and the time that participants have spent gazing at each 
 for a1 in range(0, len(MainTrials)):
     GazeTimeTrial=GazeTime[(GazeTime >= MainTrials.iloc[a1,11]) & (GazeTime <= (MainTrials.iloc[a1,11]+MainTrials.iloc[a1,6]))]
     GazeObjectTrial=GazeObject[(GazeTime >= MainTrials.iloc[a1,11]) & (GazeTime <= (MainTrials.iloc[a1,11]+MainTrials.iloc[a1,6]))]
+    for a2 in range(1, len(GazeTimeTrial)-1):
+        a3=a2
+        while((GazeObjectTrial[a2]==GazeObjectTrial[a3-1]) & (a3>0)):
+            a3=a3-1
+        if ((GazeObjectTrial[a2+1]!=GazeObjectTrial[a2]) | (a2+1==len(GazeTimeTrial)-1)):
+
+            GazeObjectTime[a1,int(GazeObjectTrial[a2])]=GazeObjectTime[a1,int(GazeObjectTrial[a2])]+(GazeTimeTrial[a2]-GazeTimeTrial[a3])
+# =============================================================================
+# *****************************************************************************
+# ******************     Responding agents in each trial     ******************
+# *****************************************************************************
+RespondingAgents=np.zeros((len(MainTrials),9))       # includes all the objects in the scene and the time that participants have spent gazing at each 
+for a1 in range(0, len(MainTrials)):
+    if (MainTrials.iloc[a1,3]==8):
+        RespondingAgents[a1,1]=1
+        RespondingAgents[a1,2]=1
+        RespondingAgents[a1,3]=1
+        RespondingAgents[a1,4]=1
+        RespondingAgents[a1,5]=1
+        RespondingAgents[a1,6]=1
+        RespondingAgents[a1,7]=1
+        RespondingAgents[a1,8]=1
+    else:
+        tempList=list(map(int, str(int(MainTrials.iloc[a1,9]))))
+        for a2 in range(0, len(tempList)):
+            RespondingAgents[a1,tempList[a2]]=1
+# =============================================================================
+# *****************************************************************************
+# Finfing the relation between responding agents and time spent gazing on them in each trial
+# *****************************************************************************
+GazeOnAgents=np.zeros((len(MainTrials),8))       # includes all the objects in the scene and the time that participants have spent gazing at each 
+for a1 in range(0, len(MainTrials)):
+    # GazeObjectTime:
+    # column2 :> Female01
+    # column3 :> Female02
+    # column4 :> Female03
+    # column5 :> MixamoFemale01
+    # column6 :> Male01
+    # column7 :> Male02
+    # column8 :> Male03
+    # column9 :> MixamoMale01
+    tempAgents=RespondingAgents[a1,:]
+    nonZeros=np.nonzero(tempAgents)[0]
+    for a2 in range(0, len(nonZeros)):
+        GazeOnAgents[a1,nonZeros[a2]-1]=GazeOnAgents[a1,nonZeros[a2]-1]+GazeObjectTime[a1,nonZeros[a2]]
+    print(np.nonzero(RespondingAgents[a1,:]))
+    
+        
     
