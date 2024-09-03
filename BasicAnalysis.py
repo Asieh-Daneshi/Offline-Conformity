@@ -10,7 +10,7 @@ df = pd.read_csv("OutputData.csv")
 # Column5 :> agents' raised hand: right:2; left:1
 # Column6 :> participant's raised hand. right(blue):1; left(yellow):2
 # Column7 :> participant's response time
-# Column8 :> responses[trialCounter,7]=congruencyFactor: congruent:1; incongruent:2
+# Column8 :> congruencyFactor: congruent:1; incongruent:2
 # Column9 :> the time passed from the onset of experiment until participant responses
 # Column10 :> responding agents (attention: if all 8 agents respond, the value is crazy! Don't look at it)
 # Column11 :> the time passes from the unset of the experiment until the fixation disappears and next trial starts
@@ -119,7 +119,23 @@ for a1 in range(0, len(MainTrials)):
     nonZeros=np.nonzero(tempAgents)[0]
     for a2 in range(0, len(nonZeros)):
         GazeOnAgents[a1,nonZeros[a2]-1]=GazeOnAgents[a1,nonZeros[a2]-1]+GazeObjectTime[a1,nonZeros[a2]]
-    print(np.nonzero(RespondingAgents[a1,:]))
-    
         
-    
+# =============================================================================
+sumGaze=GazeOnAgents.sum(axis=1)        # total time gazed on responding agents in each trial
+# =============================================================================  
+# Congruency |  Raised Hand  | Raised Color |
+# -------------------------------------------
+#     1      |       1       |   yellow     |
+#     1      |       2       |    blue      |
+#     2      |       1       |    blue      | 
+#     2      |       2       |   yellow     |
+# -------------------------------------------
+# 
+AgentsResponseColorBool=((MainTrials.iloc[:,4]-MainTrials.iloc[:,7])==0)
+AgentsResponseColor=AgentsResponseColorBool.replace({True: 1, False: 0})    # yellow=1; blue=0
+ParticipantsResponseColor=MainTrials.iloc[:,5]-1       # right(blue):0; left(yellow):1
+
+FollowBool=(ParticipantsResponseColor==AgentsResponseColor)
+Follow=FollowBool.replace({True: 1, False: 0})
+
+FollowPercentage=Follow.sum(axis=0)/len(Follow)*100          # Total following percentage for each participant
