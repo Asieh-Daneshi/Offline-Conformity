@@ -136,6 +136,12 @@ AgentsResponseColor=AgentsResponseColorBool.replace({True: 1, False: 0})    # ye
 ParticipantsResponseColor=MainTrials.iloc[:,5]-1       # right(blue):0; left(yellow):1
 
 FollowBool=(ParticipantsResponseColor==AgentsResponseColor)
-Follow=FollowBool.replace({True: 1, False: 0})
+Follow=FollowBool.replace({True: 1, False: 0})      # follow=1; not follow=0
 
 FollowPercentage=Follow.sum(axis=0)/len(Follow)*100          # Total following percentage for each participant
+# =============================================================================
+# In this part, I figure out the relevance between the time gazed on responding agents and following or not!
+FollowGazeTime=Follow*sumGaze
+NotFollowGazeTime=(1-Follow)*sumGaze
+averageFollowGazeTime=FollowGazeTime.mean(axis=0)       # average gaze time on "Follow trials"
+averageNotFollowGazeTime=NotFollowGazeTime.mean(axis=0) # average gaze time on "Not follow trials"
