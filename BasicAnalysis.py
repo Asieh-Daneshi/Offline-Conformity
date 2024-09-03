@@ -143,5 +143,12 @@ FollowPercentage=Follow.sum(axis=0)/len(Follow)*100          # Total following p
 # In this part, I figure out the relevance between the time gazed on responding agents and following or not!
 FollowGazeTime=Follow*sumGaze
 NotFollowGazeTime=(1-Follow)*sumGaze
-averageFollowGazeTime=FollowGazeTime.mean(axis=0)       # average gaze time on "Follow trials"
-averageNotFollowGazeTime=NotFollowGazeTime.mean(axis=0) # average gaze time on "Not follow trials"
+averageFollowGazeTime=FollowGazeTime.mean(axis=0)       # average gaze time on responding agents in "Follow trials"
+averageNotFollowGazeTime=NotFollowGazeTime.mean(axis=0) # average gaze time on responding agents in "Not follow trials"
+
+# =============================================================================
+GazeOnScreen=GazeObjectTime[:,10]
+FollowOnScreen=Follow*GazeOnScreen
+NotFollowOnScreen=(1-Follow)*GazeOnScreen
+averageFollowOnScreenTime=FollowOnScreen.mean(axis=0)       # average gaze time on screen in "Follow trials"
+averageNotFollowOnScreenTime=NotFollowOnScreen.mean(axis=0) # average gaze time on screen in "Not follow trials"
