@@ -29,12 +29,25 @@ for a1 in np.arange(0,50):
     # df_Train = df.iloc[0:20,:]
     # df_Test = df.iloc[20:319,:]
     df_Train = df[df['SessionInd']==1]
-    df_Test = df[df['SessionInd']==2]
-    df_Test_Catch = df_Test[df_Test['Threshold']!=0.5]
-    df_Test_Main = df_Test[df_Test['Threshold']==0.5]
     
     # -------------------------------------------------------------------------
     # Here, I check if the participant is an outlier or not
     Performance[a1] = len(df_Train[((df_Train['Threshold']==0.6) & (df_Train['Participant raised hand']==2)) | 
                                    ((df_Train['Threshold']==0.4) & (df_Train['Participant raised hand']==1))])/ len(df_Train)
-Outliers = Performance<=0.75
+Outliers = np.where(Performance<=0.75)
+for a1 in np.delete(np.arange(0,50),Outliers):
+    print(a1)
+    if a1<9:
+        Str1 = "P00"
+    else:
+        Str1 = "P0"    
+    Str2 = str(a1+1)
+    Str3 = "_OutputData.CSV"
+    Name = Str1+Str2+Str3
+    df = pd.read_csv(Name,names=ColNames)
+    # Here, I remove column 'CatchInd', because it is not correct (It is always 1). 
+    # Instead, I use the threshold to distiguish catch trials. When it is not 0.5, it is a catch trial.
+    df = df.drop('CatchInd', axis=1)
+    df_Test = df[df['SessionInd']==2]
+    df_Test_Catch = df_Test[df_Test['Threshold']!=0.5]
+    df_Test_Main = df_Test[df_Test['Threshold']==0.5]
