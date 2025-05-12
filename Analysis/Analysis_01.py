@@ -29,11 +29,20 @@ for a1 in np.arange(0,50):
     # df_Train = df.iloc[0:20,:]
     # df_Test = df.iloc[20:319,:]
     df_Train = df[df['SessionInd']==1]
-    
+    df_Test = df[df['SessionInd']==2]
+    df_Test_Catch = df_Test[df_Test['Threshold']!=0.5]
+    df_Test_Main = df_Test[df_Test['Threshold']==0.5]
     # -------------------------------------------------------------------------
-    # Here, I check if the participant is an outlier or not
-    Performance[a1] = len(df_Train[((df_Train['Threshold']==0.6) & (df_Train['Participant raised hand']==2)) | 
-                                   ((df_Train['Threshold']==0.4) & (df_Train['Participant raised hand']==1))])/ len(df_Train)
+    # Here, I check if the participant is an outlier or not (based on practice session)
+    # Performance[a1] = len(df_Train[((df_Train['Threshold']==0.6) & (df_Train['Participant raised hand']==2)) | 
+    #                                ((df_Train['Threshold']==0.4) & (df_Train['Participant raised hand']==1))])/ len(df_Train)
+    
+    # Here, I check if the participant is an outlier or not (based on catch trials)
+    Performance[a1] = len(df_Test_Catch[((df_Test_Catch['Threshold']==0.6) & (df_Test_Catch['Participant raised hand']==2)) | 
+                                   ((df_Test_Catch['Threshold']==0.4) & (df_Test_Catch['Participant raised hand']==1))])/ len(df_Test_Catch)
+# =============================================================================
+# -----------------------------------------------------------------------------
+# =============================================================================
 Outliers = np.where(Performance<=0.75)
 for a1 in np.delete(np.arange(0,50),Outliers):
     print(a1)
