@@ -14,8 +14,9 @@ import math as mt
 # =============================================================================
 ColNames = ['SessionInd','CatchInd','Threshold','NumberOfRespondingAgents',
             'Agents raised hand','Participant raised hand','Participant response time','Congruency factor','Time1','Time2','Time3']
-Performance = np.empty([50,1])  # Performance on Train session
-for a1 in np.arange(0,50):
+NP = 50         # number of participants
+Performance = np.empty([NP,1])  # Performance on Train session
+for a1 in np.arange(0,NP):
     if a1<9:
         Str1 = "P00"
     else:
@@ -44,17 +45,17 @@ for a1 in np.arange(0,50):
 # =============================================================================
 # -----------------------------------------------------------------------------
 # =============================================================================
-FollowPercentage = np.empty([50,1])  # Follow percentage in main trials
+FollowPercentage = np.empty([NP,1])  # Follow percentage in main trials
 for a1 in np.arange(1,9):
     Name1 = 'FollowPercentageCon'+str(a1)
-    globals()[Name1] = np.empty([50,1])    # Follow PercentageCon in main trials with a1 agent
+    globals()[Name1] = np.empty([NP,1])    # Follow PercentageCon in main trials with a1 agent
     globals()[Name1][:]=np.nan
     Name2 = 'FollowPercentageIncon'+str(a1)
-    globals()[Name2] = np.empty([50,1])    # Follow PercentageIncon in main trials with a1 agent
+    globals()[Name2] = np.empty([NP,1])    # Follow PercentageIncon in main trials with a1 agent
     globals()[Name2][:]=np.nan
 
 Outliers = np.where(Performance<=0.75)
-for a1 in np.delete(np.arange(0,50),Outliers):
+for a1 in np.delete(np.arange(0,NP),Outliers[0]):
     if a1<9:
         Str1 = "P00"
     else:
@@ -69,8 +70,6 @@ for a1 in np.delete(np.arange(0,50),Outliers):
     df_Test = df[df['SessionInd']==2]
     df_Test_Catch = df_Test[df_Test['Threshold']!=0.5]
     df_Test_Main = df_Test[df_Test['Threshold']==0.5]
-    FollowPercentage[a1] = len(df_Test_Main[(df_Test_Main['Participant raised hand']==1) & (df_Test_Main['Agents raised hand']==2)|
-                                            (df_Test_Main['Participant raised hand']==2) & (df_Test_Main['Agents raised hand']==1)])/len(df_Test_Main)
     
     df_Test_Con = df_Test[df_Test['Congruency factor']==1]
     df_Test_Incon = df_Test[df_Test['Congruency factor']==2]
@@ -115,3 +114,48 @@ plt.xlabel('Number of Responding Agents')
 plt.ylabel('Mean Follow Percentage')
 plt.title('Mean Follow Percentage with SEM Error Bars')
 plt.show()
+# =============================================================================
+NPR = NP -len(Outliers[0])     # number of remaining participants fater removing outliers
+# Participants
+ParticipantNumber = np.repeat(np.arange(1,NPR+1),16)
+# number of responding agents
+NA = np.arange(1,9)
+NumberOfAgents = np.tile(NA,NPR*2)
+# congruency (congruent=1; incongruent=0)
+Con = np.concatenate((np.ones([8]),np.zeros([8])),axis=0)
+Congruency = np.tile(Con,NPR)
+FollowPercentageAll = np.transpose(np.stack([FollowPercentageCon1,FollowPercentageIncon1,FollowPercentageCon2,FollowPercentageIncon2,
+                                             FollowPercentageCon3,FollowPercentageIncon3,FollowPercentageCon4,FollowPercentageIncon4,
+                                             FollowPercentageCon5,FollowPercentageIncon5,FollowPercentageCon6,FollowPercentageIncon6,
+                                             FollowPercentageCon7,FollowPercentageIncon7,FollowPercentageCon8,FollowPercentageIncon8],axis=0), (1, 0, 2)).reshape(-1,1)
+FollowPercentage = np.delete(FollowPercentageAll,np.where(np.isnan(FollowPercentageAll))[0])
+df_long = pd.DataFrame(np.transpose([ParticipantNumber,Congruency,NumberOfAgents,FollowPercentage]),columns=['ParticipantNumber','Congruency','NumberOfAgents','FollowPercentage'])
+# =============================================================================
+# ANOVA (1): Follow percentage
+import pingouin as pg
+anova_follow1 = pg.rm_anova(dv='FollowPercentage', 
+                           within=['Congruency', 'NumberOfAgents'], 
+                           subject='ParticipantNumber', 
+                           data=df_long, 
+                           detailed=True)
+
+print(anova_follow1)
+# =============================================================================
+# ANOVA (2): Follow percentage
+import statsmodels.api as sm
+from statsmodels.stats.anova import AnovaRM
+
+model = AnovaRM(data=df_long, depvar='FollowPercentage', subject='ParticipantNumber',
+                within=['Congruency', 'NumberOfAgents'])
+anova_follow2 = model.fit()
+print(anova_follow2)
+# =============================================================================
+# LMM: Follow percentage
+import statsmodels.api as sm
+from statsmodels.formula.api import mixedlm
+
+model = mixedlm("FollowPercentage ~ Congruency * NumberOfAgents", 
+                df_long, 
+                groups=df_long["ParticipantNumber"])
+result = model.fit()
+print(result.summary())
