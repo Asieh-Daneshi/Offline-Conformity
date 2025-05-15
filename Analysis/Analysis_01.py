@@ -112,15 +112,17 @@ for a1 in np.arange(0,8):
 # bar plot with errorbar
 # =============================================================================
 NumAgents = np.arange(1,9)      # number of responding agents
-plt.bar(NumAgents-0.2,meanFollowPercentageCon.flatten(),width=0.4,facecolor='#219EBC',edgecolor='#023047')
+plt1 = plt.bar(NumAgents-0.2,meanFollowPercentageCon.flatten(),width=0.4,facecolor='#219EBC',edgecolor='#023047',label='Congruent')
 plt.errorbar(NumAgents-0.2,meanFollowPercentageCon.flatten(), yerr=semFollowPercentageCon.flatten(), 
              fmt='o', capsize=5, color='#023047')
-plt.bar(NumAgents+0.2,meanFollowPercentageIncon.flatten(),width=0.4,facecolor='#FFB703',edgecolor='#FB8500')
+plt2 = plt.bar(NumAgents+0.2,meanFollowPercentageIncon.flatten(),width=0.4,facecolor='#FFB703',edgecolor='#FB8500',label='Incongruent')
 plt.errorbar(NumAgents+0.2, meanFollowPercentageIncon.flatten(), yerr=semFollowPercentageIncon.flatten(), 
              fmt='o', capsize=5, color='#FB8500')
+plt.ylim([0.4, 0.6])
 plt.xlabel('Number of Responding Agents')
 plt.ylabel('Mean Follow Percentage')
 plt.title('Mean Follow Percentage with SEM Error Bars')
+plt.legend([plt1,plt2],['Congruent','Incongruent'])
 plt.show()
 # =============================================================================
 # Response time plot
@@ -139,15 +141,17 @@ for a1 in np.arange(0,8):
 # bar plot with errorbar
 # =============================================================================
 NumAgents = np.arange(1,9)      # number of responding agents
-plt.bar(NumAgents-0.2,meanRTCon.flatten(),width=0.4,facecolor='#219EBC',edgecolor='#023047')
+plt1 = plt.bar(NumAgents-0.2,meanRTCon.flatten(),width=0.4,facecolor='#219EBC',edgecolor='#023047',label='Congruent')
 plt.errorbar(NumAgents-0.2,meanRTCon.flatten(), yerr=semRTCon.flatten(), 
              fmt='o', capsize=5, color='#023047')
-plt.bar(NumAgents+0.2,meanRTIncon.flatten(),width=0.4,facecolor='#FFB703',edgecolor='#FB8500')
+plt2 = plt.bar(NumAgents+0.2,meanRTIncon.flatten(),width=0.4,facecolor='#FFB703',edgecolor='#FB8500',label='Incongruent')
 plt.errorbar(NumAgents+0.2, meanRTIncon.flatten(), yerr=semRTIncon.flatten(), 
              fmt='o', capsize=5, color='#FB8500')
+plt.ylim([1.2, 1.6])
 plt.xlabel('Number of Responding Agents')
 plt.ylabel('Mean RT')
 plt.title('Mean RT with SEM Error Bars')
+plt.legend([plt1,plt2],['Congruent','Incongruent'])
 plt.show()
 # =============================================================================
 # Making data frame in long format
@@ -223,3 +227,4 @@ modelRT = mixedlm("RT ~ Congruency * NumberOfAgents",
                 groups=df_long["ParticipantNumber"])
 result = modelRT.fit()
 print(result.summary())
+# checking git
