@@ -36,6 +36,8 @@ for a1 in np.arange(0,NP):
     df = pd.read_csv(Name,names=ColNames2)
     Hits = np.zeros([len(df),11])
     for a3 in np.arange(0,len(df)):
+        # for a5 in np.arange(0,11):
+        #     Hits[a3,a5] = 0
     # for a3 in np.arange(0,10):
         TrialStart = df.iloc[a3,8]
         TrialEnd = df.iloc[a3,10]
@@ -68,4 +70,6 @@ for a1 in np.arange(0,NP):
                 Hits[a3,9] = Hits[a3,9]+1
             elif hitObject == 'Floor':
                 Hits[a3,9] = Hits[a3,10]+1
-            
+
+    DF = pd.DataFrame(Hits)
+    DF.to_csv('Hits'+str(a1+1)+'.csv')
