@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import random
+import csv
 # =============================================================================
 ColNames1 = ['TimePoint','Object','Pos']    # name of the columns of eye motion data
 ColNames2 = ['SessionInd','CatchInd','Threshold','NumberOfRespondingAgents',    # name of the columns of behavioral data
@@ -26,3 +27,8 @@ for a1 in np.arange(0,NP):
     RespondingAgents = np.zeros([320,8])
     for a2 in np.arange(0,320):
         RespondingAgents[a2,0:int(nAgents[a2])] = random.sample(range(1,9),int(nAgents[a2]))
+    for a3 in np.arange(0,8):
+        indexName = 'RespondingAgents'+str(a3+1)
+        temp = RespondingAgents[:,a3:a3+1]
+        df[indexName] = temp
+    df.to_csv(Name)
